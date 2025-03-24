@@ -1,0 +1,58 @@
+name: CI/CD for Real Estate ML
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: 3.9
+
+      - name: Create conda environment
+        run: |
+          conda env create -f environment.yaml
+        shell: bash
+
+      - name: Verify conda environment
+        run: |
+          conda info --envs
+          which python
+          python --version
+        shell: bash
+
+      - name: Run tests
+        run: |
+          source activate my-real-estate-env
+          pytest tests/
+        shell: bash
+
+      - name: Train model
+        run: |
+          source activate my-real-estate-env
+          python train.py
+        shell: bash
+
+      - name: Deploy model to Azure ML
+        run: |
+          source activate my-real-estate-env
+          python azure_ml_deploy.py
+        env:
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          AZURE_ML_WORKSPACE_NAME: ${{ secrets.AZURE_ML_WORKSPACE_NAME }}
+          # Uncomment and set these if needed for service principal authentication:
+          # AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          # AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          # AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        shell: bash
+
