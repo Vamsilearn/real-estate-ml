@@ -59,7 +59,7 @@ def main():
         endpoint_name=endpoint_name,
         model=registered_model,
         environment=created_environment,
-        instance_type="Standard_DS3_v2",  # Consider using a larger SKU
+        instance_type="Standard_DS2_v2",  # Consider using a larger SKU
         instance_count=1,
         code_configuration=CodeConfiguration(
             code="./",                # Folder containing your inference script
