@@ -7,7 +7,7 @@ dependencies:
   - pandas
   - scikit-learn
   - joblib
-  - pytest
+  - pytest  # needed if you want to run tests
   - pip
   - pip:
-      - azure-ai-ml
+      - azure-ai-ml  # or other PyPI packages not on conda
