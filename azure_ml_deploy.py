@@ -61,7 +61,7 @@ def main():
         instance_type="Standard_DS2_v2",
         instance_count=1,
         code_path="./",          # folder that contains your inference script
-        entry_script="inference.py",  # your scoring script
+        scoring_script="inference.py",  # your scoring script
     )
     ml_client.online_deployments.begin_create_or_update(deployment).result()
 
