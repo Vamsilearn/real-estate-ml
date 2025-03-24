@@ -22,7 +22,7 @@ jobs:
           auto-activate-base: false
 
       - name: Run tests
-        run: conda run -n my-real-estate-env pytest tests/
+        run: conda run -n my-real-estate-env python -m pytest tests/
 
       - name: Train model
         run: conda run -n my-real-estate-env python train.py
@@ -32,8 +32,4 @@ jobs:
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
           AZURE_ML_WORKSPACE_NAME: ${{ secrets.AZURE_ML_WORKSPACE_NAME }}
-          # If needed:
-          # AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          # AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          # AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         run: conda run -n my-real-estate-env python azure_ml_deploy.py
