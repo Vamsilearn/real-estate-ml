@@ -5,7 +5,8 @@ from azure.ai.ml.entities import (
     Environment,
     Model,
     ManagedOnlineEndpoint,
-    ManagedOnlineDeployment
+    ManagedOnlineDeployment,
+    CodeConfiguration  # NEW: Import CodeConfiguration
 )
 from azure.identity import DefaultAzureCredential
 import os
@@ -51,17 +52,19 @@ def main():
         endpoint = ml_client.online_endpoints.begin_create_or_update(endpoint).result()
         print(f"Endpoint '{endpoint_name}' created.")
 
-    # 5. Create a deployment for that endpoint
+    # 5. Create a deployment for that endpoint using CodeConfiguration
     deployment_name = "real-estate-deployment"
     deployment = ManagedOnlineDeployment(
         name=deployment_name,
         endpoint_name=endpoint_name,
         model=registered_model,
         environment=created_environment,
-        instance_type="Standard_DS2_v2",
+        instance_type="Standard_DS3_v2",  # Consider using a larger SKU
         instance_count=1,
-        code_path="./",          # folder that contains your inference script
-        scoring_script="inference.py",  # your scoring script
+        code_configuration=CodeConfiguration(
+            code="./",                # Folder containing your inference script
+            scoring_script="inference.py"
+        )
     )
     ml_client.online_deployments.begin_create_or_update(deployment).result()
 
