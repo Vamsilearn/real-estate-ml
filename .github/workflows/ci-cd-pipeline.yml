@@ -12,7 +12,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      # 1) Install and activate your Conda environment automatically
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -22,12 +21,11 @@ jobs:
           python-version: 3.9
           auto-activate-base: false
 
-      # 2) Now the environment is activated for all subsequent steps
       - name: Run tests
-        run: pytest tests/
+        run: conda run -n my-real-estate-env pytest tests/
 
       - name: Train model
-        run: python train.py
+        run: conda run -n my-real-estate-env python train.py
 
       - name: Deploy model to Azure ML
         env:
@@ -38,4 +36,4 @@ jobs:
           # AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           # AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           # AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        run: python azure_ml_deploy.py
+        run: conda run -n my-real-estate-env python azure_ml_deploy.py
