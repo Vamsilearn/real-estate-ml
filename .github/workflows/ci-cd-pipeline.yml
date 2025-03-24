@@ -12,47 +12,30 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      # 1) Install and activate your Conda environment automatically
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
+          environment-file: environment.yml
+          activate-environment: my-real-estate-env
           python-version: 3.9
+          auto-activate-base: false
 
-      - name: Create conda environment
-        run: |
-          conda env create -f environment.yaml
-        shell: bash
-
-      - name: Verify conda environment
-        run: |
-          conda info --envs
-          which python
-          python --version
-        shell: bash
-
+      # 2) Now the environment is activated for all subsequent steps
       - name: Run tests
-        run: |
-          source activate my-real-estate-env
-          pytest tests/
-        shell: bash
+        run: pytest tests/
 
       - name: Train model
-        run: |
-          source activate my-real-estate-env
-          python train.py
-        shell: bash
+        run: python train.py
 
       - name: Deploy model to Azure ML
-        run: |
-          source activate my-real-estate-env
-          python azure_ml_deploy.py
         env:
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
           AZURE_ML_WORKSPACE_NAME: ${{ secrets.AZURE_ML_WORKSPACE_NAME }}
-          # Uncomment and set these if needed for service principal authentication:
+          # If needed:
           # AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           # AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           # AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        shell: bash
-
+        run: python azure_ml_deploy.py
